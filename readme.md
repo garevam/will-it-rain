@@ -53,7 +53,7 @@ any sort of commercial purposes.
 ### Future development possibilities
 
 - Save the session
-- Remember multiple queries within the same session, to avoid having to recall every time
+- Remember multiple queries within the same session, to compare them without having to query open-meteo repeatedly
 - Some sort of comparison function to overlay the graphs for different cities/dates
 - Offer to save a screenshot of the currently displayed data
 - Build and host my own backed with my own API key instead of relying on the third party openmeteopy wrapper
