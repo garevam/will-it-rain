@@ -11,6 +11,15 @@ information to a dashboard to present the user some statistics:
 This program's predictions are not to be taken seriously. Weather patterns are highly irregular and everchanging -
 specially in these days of accelerated climate change.
 
+This software or I are not in any way associated with or part of open-meteo.
+
+### openmeteopy
+
+openmeteopy is a third party wrapper under the license, textually citing, *DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE*.
+I am uploading this code to my own repository so that (hopefully) the whole thing will work in the end, without me having
+to provide my own API key.
+Here's the source: https://github.com/m0rp43us/openmeteopy
+
 ### To do
 
 - User input
