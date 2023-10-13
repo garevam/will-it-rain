@@ -1,8 +1,7 @@
 from openmeteo_py import OWmanager
-from openmeteo_py.Hourly.HourlyHistorical import HourlyHistorical
 from openmeteo_py.Daily.DailyHistorical import DailyHistorical
 from openmeteo_py.Options.HistoricalOptions import HistoricalOptions
-from openmeteo_py.Utils.constants import *
+from openmeteo_py.Utils.constants import *  # necessary by the wrapper to interpret the options correctly
 
 """
 WIP
@@ -22,22 +21,41 @@ Made with Python 3.11
 
 
 def main():
-    # Latitude, Longitude
+    # To do: Latitude, Longitude to be user input
     longitude = 33.89
-    latitude = -6.31
+    latitude = 26.31
 
-    hourly = HourlyHistorical()
-    daily = DailyHistorical()
-    options = HistoricalOptions(latitude, longitude, nan, False, celsius, kmh, mm, iso8601, utc, "2022-12-31",
-                                "2023-02-26")
+    # To do: add an input setting for the dates, which are right now hard coded in "options = HistoricalOptions(xxx)"
 
-    # notice that we had to give the value "None" for the hourly parameter,otherwise you'll be filling the hourly parameter instead of the daily one.
-    mgr = OWmanager(options, OWmanager.historical, hourly.all(), daily.all())
+#    hourly = HourlyHistorical()
+    weatherquery = DailyHistorical().precipitation_sum()
+    options = HistoricalOptions(  # All are required by the wrapper. Removing any, even if not used, will cause a crash
+        latitude,
+        longitude,
+        nan,  # required by wrapper to interpret options correctly
+        False,  # don't include current weather
+        celsius,  # temperature unit
+        kmh,  # wind speed unit
+        mm,  # precipitation unit
+        iso8601,  # time format
+        utc,  # timezone
+        "2022-01-01",  # start date
+        "2022-01-02"  # end date. Note: this day will NOT be included in the query!
+    )
 
-    # Download data,here we want it as a key value json where the keys are dates and values the corresponding values of that date (technically timestamp)
-    meteo = mgr.get_data(1)
+    # Preparing the for the wrapper. The value "None" fills the hourly parameter, preventing that the daily query is
+    # interpreted as an hourly one
+    finalquery = OWmanager(options, OWmanager.historical, None, weatherquery)
 
-    print(meteo)
+    # The integer requests different formats for the data:
+    # 0 returns a dictionary with some unnecessary data, such as elevation. The last entry is another dictionary, containing YET ANOTHER dictionary with the requested weather data
+    # 1 returns just a dictionary containing only the dictionary holding the requested weather data
+    # 2 and 3 return some kind of tabular data structure. It seems to be meant for display in a command line
+    # Do not change, this code supports specifically the setting 1
+    meteodata = finalquery.get_data(1)
+    print(meteodata)
+
+    # To do: flatten that "dictionary in a dictionary" into a simple dictionary
 
 if __name__ == '__main__':
     main()
