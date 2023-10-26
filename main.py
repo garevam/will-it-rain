@@ -40,17 +40,7 @@ def getdate():
             print("That doesn't seem like a valid date! Did you use the correct format? Try again!\n")
 
 
-def main():
-    # To do: Latitude, Longitude to be user input. Test default is approximated London coordinates
-    longitude = 51.50
-    latitude = 0.12
-
-    daterange = getdate()
-    print(daterange)
-
-
-
-#    hourly = HourlyHistorical()
+def gethistoricweatherdata():
     weatherquery = DailyHistorical().precipitation_sum()
     options = HistoricalOptions(  # All are required by the wrapper. Removing any, even if not used, will cause a crash
         latitude,
@@ -62,8 +52,8 @@ def main():
         mm,  # precipitation unit
         iso8601,  # time format
         utc,  # timezone
-        daterange[0],  # "2022-01-01",  # start date
-        daterange[1]  # "2022-01-02"  # end date. Note: this day will NOT be included in the query!
+        "1970-01-01",  # start date
+        "2023-01-01"  # end date. Note: this day will NOT be included in the query results!
     )
 
     # Preparing the for the wrapper. The value "None" fills the hourly parameter, preventing that the daily query is
@@ -78,7 +68,16 @@ def main():
     meteodata = finalquery.get_data(1)
     print(meteodata)
 
-    # To do: flatten that "dictionary in a dictionary" into a simple dictionary
+
+def main():
+    # To do: Latitude, Longitude to be user input. Test default is approximated London coordinates
+    longitude = 51.50
+    latitude = 0.12
+
+    daterange = getdate()
+    historicweather = gethistoricweatherdata()
+
+
 
 if __name__ == '__main__':
     main()
