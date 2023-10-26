@@ -2,6 +2,7 @@ from openmeteo_py import OWmanager
 from openmeteo_py.Daily.DailyHistorical import DailyHistorical
 from openmeteo_py.Options.HistoricalOptions import HistoricalOptions
 from openmeteo_py.Utils.constants import *  # necessary by the wrapper to interpret the options correctly
+from datetime import datetime, timedelta
 
 """
 WIP
@@ -20,12 +21,34 @@ Made with Python 3.11
 """
 
 
-def main():
-    # To do: Latitude, Longitude to be user input
-    longitude = 33.89
-    latitude = 26.31
+def getdate():
+    while True:
+        inputstartdate = input("Enter start date (in format yyyy mm dd): ")
+        inputenddate = input("Enter end date (in format yyyy mm dd): ")
+        daterange = []
+        try:
+            inputstartdate = datetime.strptime(inputstartdate, "%Y %m %d")
+            daterange.append(inputstartdate)
+            inputenddate = datetime.strptime(inputenddate, "%Y %m %d")
+            inputenddate += timedelta(days=1)  # The meteo database does not include the given end date in the query.
+                                               # Adding one day to the user input retrieves the results correctly.
+            daterange.append(inputenddate)  # At this point the dates include extra unused data for hours and minutes
+            formatted_dates = [date.strftime("%Y-%m-%d") for date in daterange]  # This removes that extra data and
+                                                                                 # formats the dates for openmeteo
+            return formatted_dates
+        except ValueError:
+            print("That doesn't seem like a valid date! Did you use the correct format? Try again!\n")
 
-    # To do: add an input setting for the dates, which are right now hard coded in "options = HistoricalOptions(xxx)"
+
+def main():
+    # To do: Latitude, Longitude to be user input. Test default is approximated London coordinates
+    longitude = 51.50
+    latitude = 0.12
+
+    daterange = getdate()
+    print(daterange)
+
+
 
 #    hourly = HourlyHistorical()
     weatherquery = DailyHistorical().precipitation_sum()
@@ -39,8 +62,8 @@ def main():
         mm,  # precipitation unit
         iso8601,  # time format
         utc,  # timezone
-        "2022-01-01",  # start date
-        "2022-01-02"  # end date. Note: this day will NOT be included in the query!
+        daterange[0],  # "2022-01-01",  # start date
+        daterange[1]  # "2022-01-02"  # end date. Note: this day will NOT be included in the query!
     )
 
     # Preparing the for the wrapper. The value "None" fills the hourly parameter, preventing that the daily query is
