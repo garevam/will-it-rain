@@ -3,6 +3,7 @@ from openmeteo_py.Daily.DailyHistorical import DailyHistorical
 from openmeteo_py.Options.HistoricalOptions import HistoricalOptions
 from openmeteo_py.Utils.constants import *  # necessary by the wrapper to interpret the options correctly
 from datetime import datetime, timedelta
+import re
 
 """
 WIP
@@ -40,6 +41,50 @@ def getdate():
             print("That doesn't seem like a valid date! Did you use the correct format? Try again!\n")
 
 
+def getcoordinates():
+    print("Input here the coordinates of the chosen location. You can easily find the coordinates for any given city in"
+          " any search machine like Google.\nThis task might get automatized in the future, but it's a bit complicated"
+          " because many cities have the same name!")
+    while True:
+        print("\nPlease enter the coordinates in format x.x, with up to 4 digits on either side of the dot."
+              " Here's some examples:"
+              "\nLondon, UK: 51.5072, 0.1276"
+              "\nTokyo, Japan: 35.6764, 139.6500"
+              "\nNew York, USA: 40.7128, 74.0060"
+              "\nNairobi, Kenya: 1.2921, 36.8219")
+        longitude = input("Longitude: ")
+        latitude = input("Latitude: ")
+        pattern = r'^\d{1,4}\.\d{1,4}$'
+        if re.match(pattern, longitude) and re.match(pattern, latitude):
+            print("These coordinates look valid. Let's hope openmeteo can find them!")
+            return longitude, latitude
+        else:
+            "These coordinates don't seem to match the required format. Try again!"
+
+
+"""
+    In order to keep things simple, the code implemented above uses AAI (Artificial Artificial Intelligence) to identify
+    the correct city and it's corresponding coordinates. Some kind of error detection to check whether the input is valid
+    coordinates would be nice, though.
+
+    Here's alternative (not tested) code for this function. This should work, but it might struggle finding the correct
+    city because many have the same name. "Country" wouldn't be a valid identificator either... There's 67 towns called
+    Springfield in the USA.
+
+    from geopy.geocoders import Nominatim
+    # Initialize the Nominatim geocoder
+    geolocator = Nominatim(user_agent="city-coordinates")
+    # Prompt the user for a city name
+    city_name = input("Enter a city name: ")
+    # Use geocoding to retrieve the coordinates
+    location = geolocator.geocode(city_name)
+    if location:
+        return {location.latitude}, {location.longitude}
+    else:
+        print(f"Coordinates for {city_name} not found.")
+"""
+
+
 def gethistoricweatherdata():
     weatherquery = DailyHistorical().precipitation_sum()
     options = HistoricalOptions(  # All are required by the wrapper. Removing any, even if not used, will cause a crash
@@ -74,9 +119,11 @@ def main():
     longitude = 51.50
     latitude = 0.12
 
+    coordinates = getcoordinates()
     daterange = getdate()
     historicweather = gethistoricweatherdata()
 
+    print(coordinates)
 
 
 if __name__ == '__main__':
