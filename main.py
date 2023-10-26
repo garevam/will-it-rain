@@ -85,11 +85,11 @@ def getcoordinates():
 """
 
 
-def gethistoricweatherdata():
+def gethistoricweatherdata(coordinates):
     weatherquery = DailyHistorical().precipitation_sum()
     options = HistoricalOptions(  # All are required by the wrapper. Removing any, even if not used, will cause a crash
-        latitude,
-        longitude,
+        float(coordinates[0]),  # longitude, transformed from string to float so openmeteo can read them
+        float(coordinates[1]),  # latitude, also as float for openmeteo
         nan,  # required by wrapper to interpret options correctly
         False,  # don't include current weather
         celsius,  # temperature unit
@@ -115,15 +115,10 @@ def gethistoricweatherdata():
 
 
 def main():
-    # To do: Latitude, Longitude to be user input. Test default is approximated London coordinates
-    longitude = 51.50
-    latitude = 0.12
-
-    coordinates = getcoordinates()
     daterange = getdate()
-    historicweather = gethistoricweatherdata()
+    coordinates = getcoordinates()
+    historicweather = gethistoricweatherdata(coordinates)
 
-    print(coordinates)
 
 
 if __name__ == '__main__':
